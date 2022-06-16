@@ -24,6 +24,18 @@ module.exports = {
       currency: {
         type: Sequelize.STRING,
       },
+      memory: {
+        type: Sequelize.STRING,
+      },
+      vCPU: {
+        type: Sequelize.STRING,
+      },
+      disk_type: {
+        type: Sequelize.STRING,
+      },
+      disk: {
+        type: Sequelize.STRING,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

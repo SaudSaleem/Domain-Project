@@ -1,11 +1,16 @@
 const domainModel = require("../../../database/models").Domain;
+const domain_helper = require("../../../helpers/domain_helper");
+const { spawn } = require("child_process");
 
 const addDomain = async (req, res) => {
   try {
+    let payload = await domain_helper.whois(req.body.domain_name);
+    req.body = { ...req.body, ...payload };
     const domain = await domainModel.create(req.body);
     res.status(201).send(domain);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.log("eeor", error);
+    res.status(404).json({ error: error.message });
   }
 };
 const getDomains = async (req, res) => {
@@ -44,10 +49,9 @@ const updateDomain = async (req, res) => {
       res.status(404).send("Domain with given id is not found!");
       return;
     }
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-  try {
+    let domain_name = req.body.domain_name ? req.body.domain_name : domain.domain_name
+    let payload = await domain_helper.whois(domain_name);
+    req.body = { ...req.body, ...payload };
     await domainModel.update(req.body, {
       where: {
         id: req.params.id,
