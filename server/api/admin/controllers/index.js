@@ -2,8 +2,13 @@ const adminModel = require("../../../database/models").Admin;
 
 const addAdmin = async (req, res) => {
   try {
-    const admin = await adminModel.create(req.body);
-    res.status(201).send(admin);
+    const [admin, created] = await adminModel.findOrCreate({
+      where: { email: req.body.email },
+      defaults: req.body,
+    });
+    created
+      ? res.status(201).send(admin)
+      : res.status(400).json({ error: "Admin already exist" });
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
@@ -21,5 +26,6 @@ const updateAdmin = async (req, res) => {
   }
 };
 module.exports = {
-  addAdmin,updateAdmin
+  addAdmin,
+  updateAdmin,
 };

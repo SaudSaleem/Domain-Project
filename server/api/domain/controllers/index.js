@@ -5,8 +5,13 @@ const addDomain = async (req, res) => {
   try {
     let payload = await domain_helper.whois(req.body.domain_name);
     req.body = { ...req.body, ...payload };
-    const domain = await domainModel.create(req.body);
-    res.status(201).send(domain);
+    const [domain, created] = await domainModel.findOrCreate({
+      where: { domain_name: req.body.domain_name },
+      defaults: req.body,
+    });
+    created
+    ? res.status(201).send(domain)
+    : res.status(400).json({ error: "Domain already exist" });
   } catch (error) {
     res.status(404).json({ error: error.message });
   }

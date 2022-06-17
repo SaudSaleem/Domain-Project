@@ -31,16 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       expiry_date: {
         type: DataTypes.DATE,
-      },
-      ip4: {
-        type: DataTypes.STRING,
-      },
-      ip6: {
-        type: DataTypes.STRING,
-      },
-      mail_server: {
-        type: DataTypes.STRING,
-      },
+      }
     },
     {
       sequelize,

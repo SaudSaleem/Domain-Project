@@ -1,18 +1,22 @@
 const serverModel = require("../../../database/models").Server;
 const server_helper = require("../../../helpers/server_helper");
-const { spawn } = require("child_process");
 
 const addServer = async (req, res) => {
   try {
-     const IPv4 = await server_helper.dig(req.body.server_name,'A');
-     const IPv6 = await server_helper.dig(req.body.server_name,'AAAA');
-     let payload = {
-        IPv4,IPv6
-     }
-     req.body = { ...req.body, ...payload };
-    const server = await serverModel.create(req.body);
-    console.log(123,server.type)
-    res.status(201).send(server);
+    const IPv4 = await server_helper.dig(req.body.server_name, "A");
+    const IPv6 = await server_helper.dig(req.body.server_name, "AAAA");
+    let payload = {
+      IPv4,
+      IPv6,
+    };
+    req.body = { ...req.body, ...payload };
+    const [server, created] = await serverModel.findOrCreate({
+      where: { server_name: req.body.server_name },
+      defaults: req.body,
+    });
+    created
+      ? res.status(201).send(server)
+      : res.status(400).json({ error: "Server already exist" });
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
@@ -53,12 +57,15 @@ const updateServer = async (req, res) => {
       res.status(404).send("Server with given id is not found!");
       return;
     }
-    const serverName = req.body.server_name ? req.body.server_name : server.server_name
-    const IPv4 = await server_helper.dig(serverName,'A');
-    const IPv6 = await server_helper.dig(serverName,'AAAA');
+    const serverName = req.body.server_name
+      ? req.body.server_name
+      : server.server_name;
+    const IPv4 = await server_helper.dig(serverName, "A");
+    const IPv6 = await server_helper.dig(serverName, "AAAA");
     const payload = {
-       IPv4,IPv6
-    }
+      IPv4,
+      IPv6,
+    };
     req.body = { ...req.body, ...payload };
     await serverModel.update(req.body, {
       where: {
