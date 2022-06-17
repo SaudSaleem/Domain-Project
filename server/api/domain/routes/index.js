@@ -2,10 +2,11 @@ const express = require("express");
 const router = express.Router();
 
 const domainController = require("../controllers");
+const { verifyToken } = require("../../../middlewares/auth");
 
-router.get("/",domainController.getDomains);
-router.get("/:id",domainController.getdomainById);
-router.post("/",domainController.addDomain);
-router.patch("/:id",domainController.updateDomain);
-router.delete("/:id",domainController.deleteDomain);
+router.get("/", verifyToken, domainController.getDomains);
+router.get("/:id", verifyToken, domainController.getdomainById);
+router.post("/", verifyToken, domainController.addDomain);
+router.patch("/:id", verifyToken, domainController.updateDomain);
+router.delete("/:id", verifyToken, domainController.deleteDomain);
 module.exports = router;

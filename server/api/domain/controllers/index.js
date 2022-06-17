@@ -1,6 +1,5 @@
 const domainModel = require("../../../database/models").Domain;
 const domain_helper = require("../../../helpers/domain_helper");
-const { spawn } = require("child_process");
 
 const addDomain = async (req, res) => {
   try {
@@ -9,7 +8,6 @@ const addDomain = async (req, res) => {
     const domain = await domainModel.create(req.body);
     res.status(201).send(domain);
   } catch (error) {
-    console.log("eeor", error);
     res.status(404).json({ error: error.message });
   }
 };
